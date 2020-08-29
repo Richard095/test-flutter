@@ -113,30 +113,30 @@ class _UserListState extends State<UserList> {
   }
 
 
+  verifyUsers(){
+    DatabaseHelper.instance.fetchLocalUsers().then((data) {   // Fail error
+     if(data.length == 0) {
+       debugPrint("ONLINE DATA");
+       fetchUsers();
+     }else{
+       debugPrint("SQLITE data");
+       loading = false;
+       users = data;
+       print(data.length);
+     }
+   } );
+  }
 
 
   @override
   void initState()  {
-   /*DatabaseHelper.instance.fetchLocalUsers().then((data) => {
-     if(data.length == 0) {
-       debugPrint("ONLINE DATA"),
-       fetchUsers()
-     }else{
-       debugPrint("SQLITE data"),
-       loading = false,
-       users = data,
-       debugPrint(users.toString())
-     }
-   } );*/
-
    if(_isBiometricAvailable() != null){
      _authenticateUser();
    }else{
      loading = true;
      fetchUsers();
+
    }
-
-
     super.initState();
   }
 
@@ -156,10 +156,8 @@ class _UserListState extends State<UserList> {
     debugPrint(response.body);
 
     for (var userJson in data['results']) {
+      //DatabaseHelper.instance.insertUser(UserModel.fromJson(userJson));
       _users.add(UserModel.fromJson(userJson));
-
-      DatabaseHelper.instance.insertUser(UserModel.fromJson(userJson));
-
     }
 
     setState(() {
@@ -197,7 +195,7 @@ class _UserListState extends State<UserList> {
                   Row(
                     children: [
                       Icon(  Icons.location_on, color: Colors.grey,size: 24.0),
-                      Text(users[index].city),
+                      Text(users[index].street),
                     ],
                   )
                 ],
